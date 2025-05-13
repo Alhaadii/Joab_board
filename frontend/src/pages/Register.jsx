@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FormContainer from "../components/FormContainer";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -12,6 +12,10 @@ const Register = () => {
   const [name, setName] = useState("");
   const navigate = useNavigate();
 
+  const file = useRef(null);
+  const [frontendImage, setFrontendImage] = useState(null);
+  const [backendImage, setBackendImage] = useState(null);
+
   useEffect(() => {
     if (getFromLocalStorage("UserInfo")) {
       navigate("/");
@@ -20,18 +24,29 @@ const Register = () => {
 
   const userRegister_api = async ({ fullname, email, password }) => {
     try {
+      const formData = new FormData();
+      formData.append("fullname", fullname);
+      formData.append("email", email);
+      formData.append("password", password);
+      if (backendImage) {
+        formData.append("profileImage", backendImage);
+        console.log(backendImage);
+        console.log(formData);
+      }
       const response = await axios.post(
         "http://localhost:9000/user/api/auth/register",
+        formData,
         {
-          fullname,
-          email,
-          password,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
       console.log(response.data);
       alert("Registration successful!");
       navigate("/login");
     } catch (error) {
+      console.log(error);
       console.log(error?.response?.data?.message);
       setError(error?.response?.data?.message);
       setTimeout(() => {
@@ -54,13 +69,22 @@ const Register = () => {
     }
   };
 
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setBackendImage(file);
+      const image = URL.createObjectURL(file);
+      setFrontendImage(image);
+    }
+  };
+
   return (
     <FormContainer>
       <form
         onSubmit={(e) => {
           handleSubmit(e);
         }}
-        className=" w-96 max-w-sm mx-auto bg-white p-6 rounded-lg shadow-2xl"
+        className=" w-96 max-w-sm mx-auto bg-white p-6 rounded-lg shadow-2xl flex flex-col justify-center items-center"
       >
         {error && (
           <div
@@ -74,7 +98,17 @@ const Register = () => {
         <h2 className="text-2xl font-bold mb-4 text-center uppercase">
           Register
         </h2>
-        <div className="mb-4">
+        <div className="mb-4 w-[100px] h-[100px]  rounded-full bg-white overflow-hidden relative border-2 border-gray-300">
+          <input type="file" hidden ref={file} onChange={handleImage} />
+          <img src={frontendImage} alt="" className="w-[100%] h-[100%]" />
+          <div
+            className="w-[100%] h-[100%] bg-black absolute top-0 opacity-0 hover:opacity-50 transition duration-300 ease-in-out flex items-center justify-center cursor-pointer text-white text-[20px] font-semibold"
+            onClick={() => file.current.click()}
+          >
+            +
+          </div>
+        </div>
+        <div className="mb-4 w-full">
           <label
             htmlFor="name"
             className="block text-sm font-medium text-gray-700"
@@ -90,7 +124,7 @@ const Register = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 w-full">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
@@ -106,7 +140,7 @@ const Register = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 w-full">
           <label
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
@@ -122,7 +156,7 @@ const Register = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 w-full">
           <label
             htmlFor="confirmPassword"
             className="block text-sm font-medium text-gray-700"

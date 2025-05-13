@@ -21,6 +21,10 @@ const userSchema = new mangoose.Schema(
       enum: ["admin", "user"],
       default: "user",
     },
+    profileImage: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );

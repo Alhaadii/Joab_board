@@ -26,6 +26,7 @@ export const login = async (req, res) => {
     //   httpOnly: true,
     //   secure: process.env.NODE_ENV === "production",
     //   sameSite: "strict",
+    //   maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     // });
 
     return res.status(200).json({
@@ -36,6 +37,7 @@ export const login = async (req, res) => {
         email: user.email,
         isAdmin: user.role === "admin",
         token,
+        profileImage: user.profileImage,
       },
     });
   } catch (error) {
