@@ -5,6 +5,7 @@ import userRoutes from "./api/routers/register.js";
 import loginRoutes from "./api/routers/login.js";
 import jobRoutes from "./api/routers/jobs.js";
 import cors from "cors";
+import path from "path";
 dotenv.config();
 
 connectDB();
@@ -21,6 +22,14 @@ app.use("/jobs", jobRoutes);
 app.get("/", (req, res) => {
   res.send("Hello World! This is the backend server.");
 });
+
+const __dirname = path.resolve();
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.get("/*", (_, res) => {
+    res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -7,7 +7,7 @@ import {
 const Nav = () => {
   return (
     <div className="bg-green-950">
-      <nav className="flex flex-row justify-between items-center max-w-[1420px] mx-auto">
+      <nav className="flex flex-row justify-between items-center max-w-[1024px] mx-auto">
         <Link to="/">
           <h1 className="text-white text-2xl">JOB BOARD</h1>
         </Link>
@@ -25,7 +25,10 @@ const Nav = () => {
               <li className="text-white">
                 <Link
                   to="/login"
-                  onClick={() => removeFromLocalStorage("UserInfo")}
+                  onClick={() => {
+                    window.location.reload();
+                    removeFromLocalStorage("UserInfo");
+                  }}
                 >
                   Logout
                 </Link>

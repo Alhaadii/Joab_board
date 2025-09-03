@@ -30,8 +30,6 @@ const Register = () => {
       formData.append("password", password);
       if (backendImage) {
         formData.append("profileImage", backendImage);
-        console.log(backendImage);
-        console.log(formData);
       }
       const response = await axios.post(
         "http://localhost:9000/user/api/auth/register",
@@ -42,12 +40,10 @@ const Register = () => {
           },
         }
       );
-      console.log(response.data);
+
       alert("Registration successful!");
       navigate("/login");
     } catch (error) {
-      console.log(error);
-      console.log(error?.response?.data?.message);
       setError(error?.response?.data?.message);
       setTimeout(() => {
         setError("");
@@ -77,14 +73,13 @@ const Register = () => {
       setFrontendImage(image);
     }
   };
-
   return (
     <FormContainer>
       <form
         onSubmit={(e) => {
           handleSubmit(e);
         }}
-        className=" w-96 max-w-sm mx-auto bg-white p-6 rounded-lg shadow-2xl flex flex-col justify-center items-center"
+        className=" w-96 max-w-sm mx-auto bg-white p-6 rounded-lg shadow-2xl flex flex-col justify-center items-center mt-10"
       >
         {error && (
           <div

@@ -19,12 +19,11 @@ const Login = () => {
           password,
         }
       );
-      console.log(response.data);
       setToLocalStorage("UserInfo", response.data.user);
       navigate("/");
+      // load the page
+      window.location.reload();
     } catch (error) {
-      console.log(error?.response?.data?.message);
-      console.log(error?.response);
       setError(error?.response?.data?.message);
       setTimeout(() => {
         setError("");

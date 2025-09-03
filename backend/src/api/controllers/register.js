@@ -13,17 +13,19 @@ const generateToken = (id) => {
 export const registerUser = async (req, res) => {
   try {
     const { fullname, email, password, role } = req.body;
+
     const isExistuser = await User.findOne({ email });
     if (isExistuser) {
       return res.status(400).json({ message: "User already exists" });
     }
+
     if (!fullname || !email || !password) {
       return res.status(400).json({ message: "Please fill all fields" });
     }
 
-    let profileImage;
+    let profileImage = null;
     if (req.file) {
-      profileImage = await uploadOnCloudinary(req.file.path);
+      profileImage = await uploadOnCloudinary(req.file.buffer);
     }
 
     const userDetails = await User.create({
@@ -35,6 +37,7 @@ export const registerUser = async (req, res) => {
     });
 
     userDetails.password = await userDetails.encryptPassword(password);
+
     res.status(201).json({
       message: "User registered successfully",
       user: {
@@ -46,6 +49,7 @@ export const registerUser = async (req, res) => {
         profileImage: userDetails.profileImage,
       },
     });
+
     await userDetails.save();
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
